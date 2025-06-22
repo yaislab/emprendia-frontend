@@ -8,6 +8,7 @@ interface VideoWithLSBProps {
   subtitles: string[];
   onAudioPlay?: () => void;
   className?: string;
+  videoUrl?: string;
 }
 
 export const VideoWithLSB: React.FC<VideoWithLSBProps> = ({
@@ -16,6 +17,7 @@ export const VideoWithLSB: React.FC<VideoWithLSBProps> = ({
   subtitles,
   onAudioPlay,
   className = "",
+  videoUrl,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSubtitle, setCurrentSubtitle] = useState(0);
@@ -44,27 +46,40 @@ export const VideoWithLSB: React.FC<VideoWithLSBProps> = ({
         <div className="absolute top-4 left-4 bg-black/80 text-white px-3 py-1 rounded-full text-sm">
           LSB - Lengua de Señas Boliviana
         </div>
-        
-        {/* Simulated interpreter area */}
-        <div className="w-64 h-48 bg-gray-200 rounded-lg flex items-center justify-center border-4 border-white shadow-lg">
-          <div className="text-center">
-            <Video className="h-12 w-12 mx-auto text-gray-400 mb-2" />
-            <p className="text-sm text-gray-600">Intérprete LSB</p>
-            <p className="text-xs text-gray-500">{title}</p>
+        {videoUrl ? (
+          <iframe
+            width="100%"
+            height="100%"
+            src={videoUrl}
+            title={title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="w-full h-full rounded-lg border-4 border-white shadow-lg"
+            style={{ minHeight: 200, minWidth: 320 }}
+          />
+        ) : (
+          // Simulated interpreter area (fallback)
+          <div className="w-64 h-48 bg-gray-200 rounded-lg flex items-center justify-center border-4 border-white shadow-lg">
+            <div className="text-center">
+              <Video className="h-12 w-12 mx-auto text-gray-400 mb-2" />
+              <p className="text-sm text-gray-600">Intérprete LSB</p>
+              <p className="text-xs text-gray-500">{title}</p>
+            </div>
           </div>
-        </div>
-
-        {/* Play/Pause overlay */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Button
-            onClick={togglePlay}
-            size="lg"
-            className="bg-primary/90 hover:bg-primary text-white rounded-full p-4"
-            aria-label={isPlaying ? "Pausar video" : "Reproducir video"}
-          >
-            {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
-          </Button>
-        </div>
+        )}
+        {/* Play/Pause overlay (solo si no hay video real) */}
+        {!videoUrl && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Button
+              onClick={togglePlay}
+              size="lg"
+              className="bg-primary/90 hover:bg-primary text-white rounded-full p-4"
+              aria-label={isPlaying ? "Pausar video" : "Reproducir video"}
+            >
+              {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Subtitles Area */}

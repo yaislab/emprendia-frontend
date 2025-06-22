@@ -1,19 +1,16 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { VideoWithLSB } from '@/components/VideoWithLSB';
 import { AccessibilityToolbar } from '@/components/AccessibilityToolbar';
 import { ArrowRight, Users, Lightbulb, Target } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-interface WelcomeProps {
-  onStart: () => void;
-}
-
-export const Welcome: React.FC<WelcomeProps> = ({ onStart }) => {
+export const Welcome: React.FC = () => {
   const [highContrast, setHighContrast] = useState(false);
   const [largeText, setLargeText] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [voiceControlEnabled, setVoiceControlEnabled] = useState(false);
+  const navigate = useNavigate();
 
   const speakText = (text: string) => {
     if ('speechSynthesis' in window && audioEnabled) {
@@ -65,21 +62,22 @@ export const Welcome: React.FC<WelcomeProps> = ({ onStart }) => {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in-up">
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-green-600 to-purple-600 bg-clip-text text-transparent mb-6">
-            AS Emprende
+          <h1 className="text-5xl md:text-7xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500">
+            emprendIA
           </h1>
-          <p className="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-            Tu plataforma inclusiva para desarrollar ideas de negocio con accesibilidad total
+          <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            Transformando ideas inclusivas en negocios de impacto con el poder de la IA
           </p>
         </div>
 
         {/* Welcome Video */}
         <div className="max-w-4xl mx-auto mb-12 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
           <VideoWithLSB
-            title="Video de Bienvenida"
-            description="Te damos la bienvenida a AS Emprende, donde tu discapacidad no es un límite para emprender. Nuestros mentores especializados te guiarán paso a paso para convertir tu idea en realidad."
+            title="Bienvenido a emprendIA"
+            description="Te damos la bienvenida a emprendIA, donde tu discapacidad no es un límite para emprender. Nuestros mentores especializados te guiarán paso a paso para convertir tu idea en realidad."
             subtitles={welcomeSubtitles}
             onAudioPlay={() => speakText("Reproduciendo video de bienvenida con intérprete de lengua de señas boliviana")}
+            videoUrl="https://www.youtube.com/embed/NJS9TQqFUvs"
           />
         </div>
 
@@ -113,7 +111,7 @@ export const Welcome: React.FC<WelcomeProps> = ({ onStart }) => {
             <Button
               onClick={() => {
                 speakText("Iniciando tu jornada emprendedora");
-                onStart();
+                navigate('/idea');
               }}
               size="lg"
               className="btn-accessible bg-gradient-to-r from-green-600 to-purple-600 hover:from-green-700 hover:to-purple-700 text-white px-8 py-4 text-xl font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center gap-3 mx-auto"
@@ -133,7 +131,7 @@ export const Welcome: React.FC<WelcomeProps> = ({ onStart }) => {
 
         {/* Footer */}
         <div className="text-center mt-12 text-gray-500">
-          <p>Una iniciativa de 2Gether International para el emprendimiento inclusivo en Bolivia</p>
+          <p>Una iniciativa de YAIS para el emprendimiento inclusivo en Bolivia</p>
         </div>
       </div>
     </div>

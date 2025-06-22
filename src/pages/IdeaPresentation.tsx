@@ -1,24 +1,35 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { VoiceInput } from '@/components/VoiceInput';
 import { VideoWithLSB } from '@/components/VideoWithLSB';
 import { ArrowRight, ArrowLeft, Lightbulb } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { AccessibilityToolbar } from '@/components/AccessibilityToolbar';
+import SignCamera from '@/components/SignCamera';
+import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction
+} from '@/components/ui/alert-dialog';
+import { VoiceButton } from '@/components/VoiceButton';
+import { SignCameraButton } from '@/components/SignCameraButton';
 
-interface IdeaPresentationProps {
-  onNext: (idea: string) => void;
-  onBack: () => void;
-}
-
-export const IdeaPresentation: React.FC<IdeaPresentationProps> = ({ onNext, onBack }) => {
+export const IdeaPresentation: React.FC = () => {
   const [idea, setIdea] = useState('');
-  const [showVoiceInput, setShowVoiceInput] = useState(false);
-
-  const handleVoiceInput = (voiceText: string) => {
-    setIdea(voiceText);
-    setShowVoiceInput(false);
-  };
+  const [partialIdea, setPartialIdea] = useState('');
+  const [highContrast, setHighContrast] = useState(false);
+  const [largeText, setLargeText] = useState(false);
+  const [audioEnabled, setAudioEnabled] = useState(false);
+  const [voiceControlEnabled, setVoiceControlEnabled] = useState(false);
+  const [signCameraEnabled, setSignCameraEnabled] = useState(false);
+  const [showSignGemmaDialog, setShowSignGemmaDialog] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const tutorialSubtitles = [
     "¡Hola emprendedor/a! Es momento de compartir tu idea de negocio.",
@@ -34,8 +45,68 @@ export const IdeaPresentation: React.FC<IdeaPresentationProps> = ({ onNext, onBa
     "Un restaurante inclusivo con menús en braille y personal capacitado en LSB"
   ];
 
+  // Simulación de traducción de señas a texto usando SignGemma
+  const handleSignCameraClose = () => {
+    setSignCameraEnabled(false);
+    setIdea(
+      'Quiero crear una aplicación que ayude a las personas sordas a comunicarse fácilmente con intérpretes de LSB en Bolivia.'
+    );
+    setShowSignGemmaDialog(true);
+  };
+
+  const handleVoiceStart = () => {
+    setPartialIdea('');
+  };
+
+  const handleVoiceResult = (text: string) => {
+    setIdea(prev => [prev.trim(), text.trim()].filter(Boolean).join(' '));
+    setPartialIdea('');
+  };
+
+  const handlePartialResult = (text: string) => {
+    setPartialIdea(text);
+  };
+
+  useEffect(() => {
+    console.log({
+      idea,
+      partialIdea,
+    });
+  }, [idea, partialIdea]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 py-8">
+    <div className={`min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 py-8 ${highContrast ? 'high-contrast' : ''} ${largeText ? 'large-text' : ''}`}>
+      <AccessibilityToolbar
+        onToggleHighContrast={() => setHighContrast(!highContrast)}
+        onToggleLargeText={() => setLargeText(!largeText)}
+        onToggleAudio={() => setAudioEnabled(!audioEnabled)}
+        onToggleVoiceControl={() => setVoiceControlEnabled(!voiceControlEnabled)}
+        highContrast={highContrast}
+        largeText={largeText}
+        audioEnabled={audioEnabled}
+        voiceControlEnabled={voiceControlEnabled}
+      />
+      <SignCamera enabled={signCameraEnabled} onClose={handleSignCameraClose} />
+      <AlertDialog open={showSignGemmaDialog} onOpenChange={setShowSignGemmaDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Simulación de traducción de señas</AlertDialogTitle>
+            <AlertDialogDescription>
+              El texto en el área "Escribe tu idea aquí" fue generado automáticamente a partir de una seña capturada por la cámara.<br/>
+              <span className="text-sm text-gray-700">
+                Esta funcionalidad es una demo conceptual. En el futuro, se podrá implementar usando modelos abiertos como <a href="https://blog.google/technology/developers/google-ai-developer-updates-io-2025/" target="_blank" rel="noopener noreferrer" className="underline font-semibold">SignGemma de Google</a>, que traduce lenguaje de señas a texto en tiempo real.<br/>
+                También puedes ver el video oficial de Google DeepMind sobre SignGemma en <a href="https://x.com/GoogleDeepMind/status/1927375853551235160?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1927375853551235160%7Ctwgr%5E98806dc06fae5d5e00de05bc40402c18515d3d0b%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fwww.gadgets360.com%2Fai%2Fnews%2Fgoogle-signgemma-ai-model-translate-sign-language-to-spoken-text-unveiled-8537400" target="_blank" rel="noopener noreferrer" className="underline font-semibold">X (Twitter)</a>.<br/>
+                Ya realizamos la postulación para tener acceso temprano y experimentar con este modelo en emprendIA.
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setShowSignGemmaDialog(false)}>
+              Aceptar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <div className="container mx-auto px-4">
         {/* Progress indicator */}
         <div className="mb-8">
@@ -94,44 +165,41 @@ export const IdeaPresentation: React.FC<IdeaPresentationProps> = ({ onNext, onBa
                 </label>
                 <Textarea
                   id="idea-textarea"
-                  value={idea}
+                  value={partialIdea ? [idea.trim(), partialIdea].filter(Boolean).join(' ') : idea}
                   onChange={(e) => setIdea(e.target.value)}
                   placeholder="Describe tu idea de negocio... Por ejemplo: 'Quiero crear una aplicación que ayude a las personas sordas a...'"
                   className="min-h-32 text-lg p-4 border-2 border-gray-300 focus:border-primary rounded-lg"
                   aria-describedby="idea-help"
                 />
                 <p id="idea-help" className="text-sm text-gray-500 mt-2">
-                  Mínimo 10 palabras. Puedes usar el micrófono si prefieres dictar tu idea.
+                  Mínimo 10 palabras. Puedes usar el micrófono (o la cámara) para dictar tu idea.<br/>
+                  <span className="text-xs text-gray-400">Atajo: <kbd className="px-1 py-0.5 bg-gray-200 rounded">Alt + M</kbd> para activar el micrófono.</span>
                 </p>
               </div>
 
-              {/* Voice Input Toggle */}
-              <div className="text-center">
-                <Button
-                  onClick={() => setShowVoiceInput(!showVoiceInput)}
-                  variant="outline"
-                  className="btn-accessible"
-                  aria-label="Activar entrada por voz para dictar tu idea"
-                >
-                  {showVoiceInput ? 'Ocultar micrófono' : 'Usar micrófono'}
-                </Button>
+              {/* Botones de cámara de señas y micrófono juntos, alineados horizontalmente */}
+              <div className="flex flex-row gap-4 justify-center mt-4">
+                <VoiceButton
+                  onStart={handleVoiceStart}
+                  onResult={handleVoiceResult}
+                  onPartial={handlePartialResult}
+                  lang="es-ES"
+                  shortcut="Alt+M"
+                  size="lg"
+                  ariaLabel="Hablar para escribir"
+                />
+                <SignCameraButton
+                  onResult={setIdea}
+                  size="lg"
+                  ariaLabel="Activar reconocimiento de lenguaje de señas por cámara"
+                />
               </div>
-
-              {/* Voice Input Component */}
-              {showVoiceInput && (
-                <div className="bg-gray-50 p-6 rounded-lg">
-                  <VoiceInput
-                    onVoiceInput={handleVoiceInput}
-                    placeholder="Presiona el micrófono y describe tu idea de negocio..."
-                  />
-                </div>
-              )}
             </div>
 
             {/* Navigation */}
             <div className="flex justify-between items-center mt-8 pt-6 border-t">
               <Button
-                onClick={onBack}
+                onClick={() => navigate('/bienvenida')}
                 variant="outline"
                 className="btn-accessible flex items-center gap-2"
                 aria-label="Volver a la página de bienvenida"
@@ -141,7 +209,7 @@ export const IdeaPresentation: React.FC<IdeaPresentationProps> = ({ onNext, onBa
               </Button>
 
               <Button
-                onClick={() => onNext(idea)}
+                onClick={() => navigate('/problema')}
                 disabled={idea.trim().length < 10}
                 className="btn-accessible bg-primary hover:bg-primary/90 flex items-center gap-2"
                 aria-label="Continuar al siguiente paso: validación del problema"
