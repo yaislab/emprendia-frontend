@@ -1,7 +1,6 @@
-
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, Video } from 'lucide-react';
+import { Play, Pause, Video, Volume2 } from 'lucide-react';
 
 interface VideoWithLSBProps {
   title: string;
