@@ -50,13 +50,23 @@ export const VoiceButton: React.FC<VoiceButtonProps> = ({
     let currentSessionTranscript = '';
     recognition.onresult = (event: any) => {
       if (stoppingRef.current) return;
-      const currentTranscript = Array.from(event.results)
-        .map((result: any) => result[0].transcript)
-        .join('');
-      currentSessionTranscript = currentTranscript;
-      lastTranscriptRef.current = currentTranscript;
+      let finalTranscript = '';
+      let interimTranscript = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        } else {
+          interimTranscript += event.results[i][0].transcript;
+        }
+      }
+      // Muestra el texto parcial/interino solo como ayuda visual
       if (onPartial) {
-        onPartial(currentTranscript.trim());
+        onPartial(interimTranscript.trim());
+      }
+      // Solo actualiza el campo principal cuando hay resultado final
+      if (finalTranscript) {
+        onResult(finalTranscript.trim());
+        if (onPartial) onPartial(''); // Limpia el texto parcial
       }
     };
     recognition.onend = () => {
