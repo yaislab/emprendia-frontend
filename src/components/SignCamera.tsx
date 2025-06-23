@@ -21,7 +21,17 @@ const SignCamera: React.FC<SignCameraProps> = ({ enabled, onClose }) => {
           }
         })
         .catch((err) => {
-          setError('No se pudo acceder a la cámara. Permiso denegado o no disponible.');
+          if (err.name === 'NotAllowedError') {
+            setError('Permiso denegado para acceder a la cámara. Por favor, revisa los permisos del navegador.');
+          } else if (err.name === 'NotFoundError') {
+            setError('No se encontró ninguna cámara conectada.');
+          } else if (err.name === 'NotReadableError') {
+            setError('La cámara está siendo utilizada por otra aplicación.');
+          } else if (err.name === 'OverconstrainedError') {
+            setError('No se encontró una cámara que cumpla con los requisitos.');
+          } else {
+            setError('No se pudo acceder a la cámara. Permiso denegado o no disponible.');
+          }
         });
     } else {
       if (stream) {

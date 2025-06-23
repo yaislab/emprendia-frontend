@@ -17,7 +17,6 @@ import {
   AlertDialogAction
 } from '@/components/ui/alert-dialog';
 import { VoiceButton } from '@/components/VoiceButton';
-import { SignCameraButton } from '@/components/SignCameraButton';
 
 export const IdeaPresentation: React.FC = () => {
   const [idea, setIdea] = useState('');
@@ -90,13 +89,19 @@ export const IdeaPresentation: React.FC = () => {
       <AlertDialog open={showSignGemmaDialog} onOpenChange={setShowSignGemmaDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Simulación de traducción de señas</AlertDialogTitle>
+            <AlertDialogTitle>Simulación de traducción de señas a texto</AlertDialogTitle>
             <AlertDialogDescription>
-              El texto en el área "Escribe tu idea aquí" fue generado automáticamente a partir de una seña capturada por la cámara.<br/>
-              <span className="text-sm text-gray-700">
-                Esta funcionalidad es una demo conceptual. En el futuro, se podrá implementar usando modelos abiertos como <a href="https://blog.google/technology/developers/google-ai-developer-updates-io-2025/" target="_blank" rel="noopener noreferrer" className="underline font-semibold">SignGemma de Google</a>, que traduce lenguaje de señas a texto en tiempo real.<br/>
+              <span className="block mb-2">
+                <strong>¡Simulación exitosa!</strong> El texto en el área "Escribe tu idea aquí" fue generado automáticamente a partir de una seña capturada por la cámara.<br/>
+              </span>
+              <span className="text-sm text-gray-700 block mb-2">
+                <strong>Nota:</strong> Esta funcionalidad es una <u>demo conceptual</u>. En el futuro, podrás comunicarte en Lengua de Señas Boliviana (LSB) y ver la traducción automática a texto en tiempo real, gracias a modelos abiertos como <a href="https://blog.google/technology/developers/google-ai-developer-updates-io-2025/" target="_blank" rel="noopener noreferrer" className="underline font-semibold">SignGemma de Google</a>.<br/>
+                SignGemma es una tecnología de inteligencia artificial desarrollada por Google para traducir lenguaje de señas a texto y voz en tiempo real.<br/>
                 También puedes ver el video oficial de Google DeepMind sobre SignGemma en <a href="https://x.com/GoogleDeepMind/status/1927375853551235160?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1927375853551235160%7Ctwgr%5E98806dc06fae5d5e00de05bc40402c18515d3d0b%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fwww.gadgets360.com%2Fai%2Fnews%2Fgoogle-signgemma-ai-model-translate-sign-language-to-spoken-text-unveiled-8537400" target="_blank" rel="noopener noreferrer" className="underline font-semibold">X (Twitter)</a>.<br/>
-                Ya realizamos la postulación para tener acceso temprano y experimentar con este modelo en emprendIA.
+                <span className="block mt-2">Ya realizamos la postulación para tener acceso temprano y experimentar con este modelo en emprendIA.</span>
+              </span>
+              <span className="text-xs text-gray-500 block mt-2">
+                Cuando esta tecnología esté disponible, podrás usar la cámara para comunicarte en LSB y ver la traducción automática en la plataforma.
               </span>
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -188,11 +193,16 @@ export const IdeaPresentation: React.FC = () => {
                   size="lg"
                   ariaLabel="Hablar para escribir"
                 />
-                <SignCameraButton
-                  onResult={setIdea}
+                <Button
+                  onClick={() => setSignCameraEnabled(true)}
+                  variant="outline"
                   size="lg"
-                  ariaLabel="Activar reconocimiento de lenguaje de señas por cámara"
-                />
+                  className="btn-accessible flex items-center gap-2"
+                  aria-label="Activar reconocimiento de lenguaje de señas por cámara"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M4 6.5A2.5 2.5 0 016.5 4h7A2.5 2.5 0 0116 6.5v11A2.5 2.5 0 0113.5 20h-7A2.5 2.5 0 014 17.5v-11z" /></svg>
+                  Cámara de señas
+                </Button>
               </div>
             </div>
 
