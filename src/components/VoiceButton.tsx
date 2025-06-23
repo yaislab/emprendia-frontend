@@ -39,7 +39,6 @@ export const VoiceButton: React.FC<VoiceButtonProps> = ({
     }
     stoppingRef.current = false;
     if (onStart) onStart();
-    if (onPartial) onPartial(''); // Limpia el texto parcial antes de iniciar
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
     recognitionRef.current = recognition;
@@ -47,40 +46,27 @@ export const VoiceButton: React.FC<VoiceButtonProps> = ({
     recognition.interimResults = true;
     recognition.lang = lang;
     setIsListening(true);
-    let currentSessionTranscript = '';
+    
     recognition.onresult = (event: any) => {
-      if (stoppingRef.current) return;
-      let finalTranscript = '';
-      let interimTranscript = '';
-      for (let i = event.resultIndex; i < event.results.length; ++i) {
-        if (event.results[i].isFinal) {
-          finalTranscript += event.results[i][0].transcript;
-        } else {
-          interimTranscript += event.results[i][0].transcript;
-        }
-      }
-      // Muestra el texto parcial/interino solo como ayuda visual
+      const transcript = Array.from(event.results)
+        .map((result: any) => result[0].transcript)
+        .join('');
+      
+      lastTranscriptRef.current = transcript;
+
       if (onPartial) {
-        onPartial(interimTranscript.trim());
-      }
-      // Solo actualiza el campo principal cuando hay resultado final
-      if (finalTranscript) {
-        onResult(finalTranscript.trim());
-        if (onPartial) onPartial(''); // Limpia el texto parcial
+        onPartial(transcript);
       }
     };
+
     recognition.onend = () => {
-      if (isListening) {
-        recognition.start();
-      } else {
-        setIsListening(false);
-        // Al finalizar, concatena el transcript al valor anterior
-        if (lastTranscriptRef.current.trim()) {
-          onResult(lastTranscriptRef.current.trim());
-          lastTranscriptRef.current = '';
-        }
+      setIsListening(false);
+      if (onResult && lastTranscriptRef.current) {
+        onResult(lastTranscriptRef.current);
+        lastTranscriptRef.current = '';
       }
     };
+
     recognition.onerror = (event: any) => {
       setIsListening(false);
       alert('Error en el reconocimiento de voz: ' + event.error);

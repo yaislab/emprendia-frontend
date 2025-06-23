@@ -20,6 +20,7 @@ import { VoiceButton } from '@/components/VoiceButton';
 
 export const IdeaPresentation: React.FC = () => {
   const [idea, setIdea] = useState('');
+  const voiceSessionBaseText = useRef('');
   const [partialIdea, setPartialIdea] = useState('');
   const [highContrast, setHighContrast] = useState(false);
   const [largeText, setLargeText] = useState(false);
@@ -54,16 +55,23 @@ export const IdeaPresentation: React.FC = () => {
   };
 
   const handleVoiceStart = () => {
-    setPartialIdea('');
+    voiceSessionBaseText.current = idea;
   };
 
   const handleVoiceResult = (text: string) => {
-    setIdea(prev => [prev.trim(), text.trim()].filter(Boolean).join(' '));
-    setPartialIdea('');
+    const newText = [voiceSessionBaseText.current.trim(), text.trim()].filter(Boolean).join(' ');
+    setIdea(newText);
   };
 
   const handlePartialResult = (text: string) => {
-    setPartialIdea(text);
+    const newText = [voiceSessionBaseText.current.trim(), text.trim()].filter(Boolean).join(' ');
+    setIdea(newText);
+  };
+
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newText = e.target.value;
+    setIdea(newText);
+    voiceSessionBaseText.current = newText;
   };
 
   useEffect(() => {
@@ -170,8 +178,8 @@ export const IdeaPresentation: React.FC = () => {
                 </label>
                 <Textarea
                   id="idea-textarea"
-                  value={partialIdea ? [idea.trim(), partialIdea].filter(Boolean).join(' ') : idea}
-                  onChange={(e) => setIdea(e.target.value)}
+                  value={idea}
+                  onChange={handleTextareaChange}
                   placeholder="Describe tu idea de negocio... Por ejemplo: 'Quiero crear una aplicación que ayude a las personas sordas a...'"
                   className="min-h-32 text-lg p-4 border-2 border-gray-300 focus:border-primary rounded-lg"
                   aria-describedby="idea-help"
