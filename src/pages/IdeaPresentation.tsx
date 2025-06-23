@@ -55,17 +55,16 @@ export const IdeaPresentation: React.FC = () => {
   };
 
   const handleVoiceStart = () => {
-    voiceSessionBaseText.current = idea;
+    setPartialIdea('');
   };
 
   const handleVoiceResult = (text: string) => {
-    const newText = [voiceSessionBaseText.current.trim(), text.trim()].filter(Boolean).join(' ');
-    setIdea(newText);
+    setIdea(prev => [prev.trim(), text].filter(Boolean).join(' ') + ' ');
+    setPartialIdea('');
   };
 
   const handlePartialResult = (text: string) => {
-    const newText = [voiceSessionBaseText.current.trim(), text.trim()].filter(Boolean).join(' ');
-    setIdea(newText);
+    setPartialIdea(text);
   };
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -178,8 +177,8 @@ export const IdeaPresentation: React.FC = () => {
                 </label>
                 <Textarea
                   id="idea-textarea"
-                  value={idea}
-                  onChange={handleTextareaChange}
+                  value={partialIdea ? [idea.trim(), partialIdea].filter(Boolean).join(' ') : idea}
+                  onChange={(e) => setIdea(e.target.value)}
                   placeholder="Describe tu idea de negocio... Por ejemplo: 'Quiero crear una aplicación que ayude a las personas sordas a...'"
                   className="min-h-32 text-lg p-4 border-2 border-gray-300 focus:border-primary rounded-lg"
                   aria-describedby="idea-help"

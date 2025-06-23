@@ -48,22 +48,31 @@ export const VoiceButton: React.FC<VoiceButtonProps> = ({
     setIsListening(true);
     
     recognition.onresult = (event: any) => {
-      const transcript = Array.from(event.results)
-        .map((result: any) => result[0].transcript)
-        .join('');
-      
-      lastTranscriptRef.current = transcript;
+      let interimTranscript = '';
+      let finalTranscript = '';
+
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript + ' ';
+        } else {
+          interimTranscript += transcript;
+        }
+      }
 
       if (onPartial) {
-        onPartial(transcript);
+        onPartial(interimTranscript);
+      }
+      if (onResult && finalTranscript) {
+        onResult(finalTranscript.trim());
       }
     };
 
     recognition.onend = () => {
       setIsListening(false);
-      if (onResult && lastTranscriptRef.current) {
-        onResult(lastTranscriptRef.current);
-        lastTranscriptRef.current = '';
+      // Limpiamos el parcial al finalizar por si quedó algo
+      if (onPartial) {
+        onPartial('');
       }
     };
 
