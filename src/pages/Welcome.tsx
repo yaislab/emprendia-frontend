@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { VideoWithLSB } from '@/components/VideoWithLSB';
 import { AccessibilityToolbar } from '@/components/AccessibilityToolbar';
-import { ArrowRight, Users, Lightbulb, Target } from 'lucide-react';
+import { ArrowRight, Users, Lightbulb, Target, Smartphone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 export const Welcome: React.FC = () => {
   const [highContrast, setHighContrast] = useState(false);
   const [largeText, setLargeText] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [voiceControlEnabled, setVoiceControlEnabled] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
   const navigate = useNavigate();
 
   const speakText = (text: string) => {
@@ -59,6 +61,33 @@ export const Welcome: React.FC = () => {
         voiceControlEnabled={voiceControlEnabled}
       />
 
+      {/* Modal de tutorial de instalación */}
+      <Dialog open={showTutorial} onOpenChange={setShowTutorial}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Cómo instalar la app móvil en Android?</DialogTitle>
+            <DialogDescription>
+              <div className="mb-2">Sigue estos pasos:</div>
+              <ol className="list-decimal pl-5 space-y-2 text-left">
+                <li>Haz clic en el botón <b>Descargar app móvil para Android</b> y accede a Google Drive si es necesario.</li>
+                <li>Descarga el archivo <b>APK</b> desde Google Drive en tu dispositivo Android.</li>
+                <li>Cuando termine la descarga, abre el archivo APK desde la barra de notificaciones o la carpeta de descargas.</li>
+                <li>Si es la primera vez que instalas una app fuera de Google Play, tu teléfono te pedirá permiso para instalar apps de "orígenes desconocidos". Acepta y sigue las instrucciones.</li>
+                <li>Confirma la instalación. ¡Listo! Ya puedes abrir la app desde tu menú de aplicaciones.</li>
+              </ol>
+              <div className="mt-4 text-sm text-gray-600">
+                <b>Nota:</b> Si tienes dudas, puedes pedir ayuda a un familiar o amigo, o contactarnos para soporte. La descarga se realiza desde Google Drive y puede requerir iniciar sesión con tu cuenta de Google.
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={() => setShowTutorial(false)} autoFocus>
+              Entendido
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in-up">
@@ -107,6 +136,37 @@ export const Welcome: React.FC = () => {
             <p className="text-lg text-gray-600 mb-8">
               Te acompañaremos desde tu primera idea hasta la creación de tu producto mínimo viable
             </p>
+
+            {/* Botón de descarga de la app móvil con instrucciones accesibles */}
+            <div className="mb-6 flex flex-col items-center gap-2">
+              <Button
+                asChild
+                size="lg"
+                className="btn-accessible bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-xl font-semibold rounded-xl shadow-lg hover:shadow-xl flex items-center gap-3"
+                aria-label="Descargar la app móvil para Android (versión de prueba)"
+              >
+                <a
+                  href="https://drive.google.com/file/d/1j96NdmxRsCaGpzwbe3b0AGTiLVksROEu/view?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Smartphone className="h-7 w-7" />
+                  Descargar app móvil para Android
+                </a>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-1"
+                onClick={() => setShowTutorial(true)}
+                aria-label="¿Cómo instalar la app móvil?"
+              >
+                ¿Cómo instalar la app?
+              </Button>
+              <span className="text-gray-500 text-sm max-w-md text-center">
+                Versión de prueba. La descarga se realiza desde Google Drive y puede requerir iniciar sesión con Google para acceder al APK.
+              </span>
+            </div>
             
             <Button
               onClick={() => {
