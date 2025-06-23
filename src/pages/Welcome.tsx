@@ -67,16 +67,18 @@ export const Welcome: React.FC = () => {
           <DialogHeader>
             <DialogTitle>¿Cómo instalar la app móvil en Android?</DialogTitle>
             <DialogDescription>
-              <div className="mb-2">Sigue estos pasos:</div>
-              <ol className="list-decimal pl-5 space-y-2 text-left">
-                <li>Haz clic en el botón <b>Descargar app móvil para Android</b> y accede a Google Drive si es necesario.</li>
-                <li>Descarga el archivo <b>APK</b> desde Google Drive en tu dispositivo Android.</li>
-                <li>Cuando termine la descarga, abre el archivo APK desde la barra de notificaciones o la carpeta de descargas.</li>
-                <li>Si es la primera vez que instalas una app fuera de Google Play, tu teléfono te pedirá permiso para instalar apps de "orígenes desconocidos". Acepta y sigue las instrucciones.</li>
-                <li>Confirma la instalación. ¡Listo! Ya puedes abrir la app desde tu menú de aplicaciones.</li>
-              </ol>
-              <div className="mt-4 text-sm text-gray-600">
-                <b>Nota:</b> Si tienes dudas, puedes pedir ayuda a un familiar o amigo, o contactarnos para soporte. La descarga se realiza desde Google Drive y puede requerir iniciar sesión con tu cuenta de Google.
+              <div>
+                <div className="mb-2">Sigue estos pasos:</div>
+                <ol className="list-decimal pl-5 space-y-2 text-left">
+                  <li>Haz clic en el botón <b>Abrir carpeta de descargas (APK)</b> y accede a Google Drive si es necesario.</li>
+                  <li>Descarga la <b>versión más reciente</b> del archivo APK desde la carpeta de Google Drive en tu dispositivo Android.</li>
+                  <li>Cuando termine la descarga, abre el archivo APK desde la barra de notificaciones o la carpeta de descargas.</li>
+                  <li>Si es la primera vez que instalas una app fuera de Google Play, tu teléfono te pedirá permiso para instalar apps de "orígenes desconocidos". Acepta y sigue las instrucciones.</li>
+                  <li>Confirma la instalación. ¡Listo! Ya puedes abrir la app desde tu menú de aplicaciones.</li>
+                </ol>
+                <div className="mt-4 text-sm text-gray-600">
+                  <b>Nota:</b> Descarga siempre la versión más reciente del archivo APK en la carpeta de Google Drive. Si tienes dudas, puedes pedir ayuda a un familiar o amigo, o contactarnos para soporte. Puede requerir iniciar sesión con tu cuenta de Google.
+                </div>
               </div>
             </DialogDescription>
           </DialogHeader>
@@ -143,15 +145,15 @@ export const Welcome: React.FC = () => {
                 asChild
                 size="lg"
                 className="btn-accessible bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-xl font-semibold rounded-xl shadow-lg hover:shadow-xl flex items-center gap-3"
-                aria-label="Descargar la app móvil para Android (versión de prueba)"
+                aria-label="Abrir carpeta de descargas de la app móvil para Android (APK)"
               >
                 <a
-                  href="https://drive.google.com/file/d/1j96NdmxRsCaGpzwbe3b0AGTiLVksROEu/view?usp=sharing"
+                  href="https://drive.google.com/drive/folders/1bduWOwClz8nSjOV6WigWut7449pP1JzQ?usp=sharing"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <Smartphone className="h-7 w-7" />
-                  Descargar app móvil para Android
+                  Abrir carpeta de descargas (APK)
                 </a>
               </Button>
               <Button
@@ -164,7 +166,7 @@ export const Welcome: React.FC = () => {
                 ¿Cómo instalar la app?
               </Button>
               <span className="text-gray-500 text-sm max-w-md text-center">
-                Versión de prueba. La descarga se realiza desde Google Drive y puede requerir iniciar sesión con Google para acceder al APK.
+                Versión de prueba. Descarga siempre la versión más reciente del APK desde la carpeta de Google Drive. Puede requerir iniciar sesión con Google para acceder.
               </span>
             </div>
             
